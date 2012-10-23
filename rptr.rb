@@ -5,7 +5,7 @@
 
 # open or create usr space
 
-require 'yaml'
+require 'psych'
 
 $home = ENV[ 'HOME' ]
 $local = $home + '/.rptr'
@@ -20,10 +20,9 @@ $help_commands = {
     help: "rptr help"
 }
 
-
 begin
     File.open( $local, "r" ) do |f|
-        $data = YAML.load( f.read )
+        $data = Psych.load( f.read )
     end
 rescue
     $data = { rubies: {}, where: "" }
@@ -102,13 +101,13 @@ case ARGV[0]
         File.delete( $local )
         $no_local = true
     when "help"
-        $help.each_value do | value |
+        $help_commands.each_value do | value |
             puts value
         end
 end
 
 if $no_local == false
     File.open( $local, 'w' ) do | f |
-        f.write YAML.dump( $data )
+        f.write Psych.dump( $data )
     end
 end
